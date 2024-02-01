@@ -3,6 +3,17 @@ class Menu extends Phaser.Scene {
         super("menuScene");
     }
 
+    init(highScore) {
+        this.bestScore = highScore.bScore;
+        this.bestTime = highScore.bTime;
+        if (typeof this.bestScore == "undefined") {
+            this.bestScore = 0;
+        }
+        if (typeof this.bestTime == "undefined") {
+            this.bestTime = 0;
+        }
+    }
+
     preload() {
         // Load images / tile sprites.
         this.load.image('rocket', './assets/rocket.png');
@@ -48,11 +59,26 @@ class Menu extends Phaser.Scene {
         };
 
         // Display menu text.
-        this.add.text(game.config.width / 2, game.config.height / 2 - borderUISize - borderPadding, 'ROCKET PATROL', menuConfig).setOrigin(0.5);
+        this.add.text(game.config.width / 2, game.config.height / 2 - borderUISize - borderPadding, 'ROCKET PETROLEUM', menuConfig).setOrigin(0.5);
         this.add.text(game.config.width / 2, game.config.height / 2, 'Use <--> arrows to move & (F) to fire.', menuConfig).setOrigin(0.5);
         menuConfig.backgroundColor = '#00FF00';
         menuConfig.color = '#000';
         this.add.text(game.config.width / 2, game.config.height / 2 + borderUISize + borderPadding, 'Press <-- for Novice or --> for Expert.', menuConfig).setOrigin(0.5);
+
+        // Display high score.
+        let highConfig = {
+            fontFamily: 'Courier',
+            fontSize: '28px',
+            backgroundColor: '#F3B141',
+            color: '#843605',
+            align: 'right',
+            padding: {
+                top: 5,
+                bottom: 5,
+            },
+        };
+        this.bScore = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding * 2, `Best Score: ${this.bestScore}P`, highConfig);
+        this.bTime = this.add.text(game.config.width - borderUISize * 8 - borderPadding * 4, borderUISize + borderPadding * 2, `Best Time: ${Math.floor(this.bestTime / 1000)}`, highConfig);
 
         // Define keys.
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
@@ -64,10 +90,14 @@ class Menu extends Phaser.Scene {
             // Easy mode.
             game.settings = {
                 spaceshipSpeed: 3,
-                gameTimer: 45000
+                gameTimer: 5000//45000
             }
             this.sound.play('sfx-select');
-            this.scene.start('playScene');
+            let highScore = {
+                bScore: this.bestScore,
+                bTime: this.bestTime
+            };
+            this.scene.start('playScene', highScore);
         }
         if (Phaser.Input.Keyboard.JustDown(keyRIGHT)) {
             // Hard mode.
@@ -76,7 +106,11 @@ class Menu extends Phaser.Scene {
                 gameTimer: 30000
             }
             this.sound.play('sfx-select');
-            this.scene.start('playScene');
+            let highScore = {
+                bScore: this.bestScore,
+                bTime: this.bestTime
+            };
+            this.scene.start('playScene', highScore);
         }
     }
 }

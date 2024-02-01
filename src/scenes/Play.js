@@ -3,6 +3,17 @@ class Play extends Phaser.Scene {
         super("playScene");
     }
 
+    init(highScore) {
+        this.bestScore = highScore.bScore;
+        this.bestTime = highScore.bTime;
+        if (typeof this.bestScore == "undefined") {
+            this.bestScore = 0;
+        }
+        if (typeof this.bestTime == "undefined") {
+            this.bestTime = 0;
+        }
+    }
+
     create() {
         // Place parallax starfield tile sprites.
         this.starfieldA = this.add.tileSprite(0, 0, 640, 480, 'starfieldA').setOrigin(0, 0);
@@ -48,7 +59,7 @@ class Play extends Phaser.Scene {
             },
             fixedWidth: 100
         };
-        this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding * 2, this.p1Score, scoreConfig);
+        this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding * 2, `${this.p1Score}P`, scoreConfig);
 
         // Game over flag.
         this.gameOver = false;
@@ -57,7 +68,7 @@ class Play extends Phaser.Scene {
         this.timeLeft = game.settings.gameTimer;
         this.timeElapsed = 0;
 
-        // Display score.
+        // Display timer.
         let timerConfig = {
             fontFamily: 'Courier',
             fontSize: '28px',
@@ -77,6 +88,7 @@ class Play extends Phaser.Scene {
         // Check key input for restart.
         if (!this.gameOver && this.timeLeft <= 0) {
             this.timeLeft = 0;
+            this.timerRight.text = Math.ceil(this.timeLeft / 1000);
             let gameOverConfig = {
                 fontFamily: 'Courier',
                 fontSize: '28px',
@@ -105,10 +117,30 @@ class Play extends Phaser.Scene {
         }
 
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyRESET)) {
-            this.scene.restart();
+            let hScore = {
+                bScore: this.bestScore,
+                bTime: this.bestTime
+            };
+            if (hScore.bScore < this.p1Score) {
+                hScore.bScore = this.p1Score;
+            }
+            if (hScore.bTime < this.timeElapsed) {
+                hScore.bTime = this.timeElapsed;
+            }
+            this.scene.restart(hScore);
         }
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyLEFT)) {
-            this.scene.start("menuScene");
+            let hScore = {
+                bScore: this.bestScore,
+                bTime: this.bestTime
+            };
+            if (hScore.bScore < this.p1Score) {
+                hScore.bScore = this.p1Score;
+            }
+            if (hScore.bTime < this.timeElapsed) {
+                hScore.bTime = this.timeElapsed;
+            }
+            this.scene.start("menuScene", hScore);
         }
 
         this.starfieldA.tilePositionX -= 0.5;

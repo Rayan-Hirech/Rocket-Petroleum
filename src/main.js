@@ -10,6 +10,7 @@ Mods Added:
     - (1 point): Created 2 new scrolling tile sprites for the background (used in the parallax background).
     - (1 point): Implemented a speed increase for the ships and rocket after 30 seconds.
     - (1 point): Allowed the player to control the rocket after it's fired.
+    - (1 point): Tracked a highscore and best time across scenes and display it in the main menu.
 */
 
 let config = {

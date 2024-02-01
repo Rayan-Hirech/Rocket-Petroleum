@@ -4,8 +4,10 @@ class Play extends Phaser.Scene {
     }
 
     create() {
-        // Place starfield tile sprite.
-        this.starfield = this.add.tileSprite(0, 0, 640, 480, 'starfield').setOrigin(0, 0);
+        // Place parallax starfield tile sprites.
+        this.starfieldA = this.add.tileSprite(0, 0, 640, 480, 'starfieldA').setOrigin(0, 0);
+        this.starfieldB = this.add.tileSprite(0, 0, 640, 480, 'starfieldB').setOrigin(0, 0);
+        this.starfieldC = this.add.tileSprite(0, 0, 640, 480, 'starfieldC').setOrigin(0, 0);
 
         // Green UI background.
         this.add.rectangle(0, borderUISize + borderPadding, game.config.width, borderUISize * 2, 0x00FF00).setOrigin(0, 0);
@@ -22,7 +24,7 @@ class Play extends Phaser.Scene {
         this.ship01 = new Spaceship(this, game.config.width + borderUISize * 6, borderUISize * 4, 'spaceship', 0, 30, game.config.width, game.settings.spaceshipSpeed).setOrigin(0,0);
         this.ship02 = new Spaceship(this, game.config.width + borderUISize * 3, borderUISize * 5 + borderPadding * 2, 'spaceship', 0, 20, game.config.width, game.settings.spaceshipSpeed).setOrigin(0,0);
         this.ship03 = new Spaceship(this, game.config.width, borderUISize * 6 + borderPadding * 4, 'spaceship', 0, 10, game.config.width, game.settings.spaceshipSpeed).setOrigin(0,0);
-        this.meowship = new Spaceship(this, game.config.width + 500, borderUISize * 7 + borderPadding * 6, 'meowship', 0, 50, game.config.width + 750, game.settings.spaceshipSpeed * 3);
+        this.meowship = new Spaceship(this, game.config.width + 500, borderUISize * 7 + borderPadding * 6, 'meowship', 0, 50, game.config.width + 1000, game.settings.spaceshipSpeed * 3);
 
         // Define keys.
         keyFIRE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
@@ -99,7 +101,9 @@ class Play extends Phaser.Scene {
             this.scene.start("menuScene");
         }
 
-        this.starfield.tilePositionX -= 4;
+        this.starfieldA.tilePositionX -= 0.5;
+        this.starfieldB.tilePositionX -= 1.5;
+        this.starfieldC.tilePositionX -= 4;
         if (!this.gameOver) {
             if (this.p1Rocket.update()) {
                 this.timeLeft -= 3000;

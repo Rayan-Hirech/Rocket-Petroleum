@@ -7,6 +7,7 @@ class Menu extends Phaser.Scene {
         // Load images / tile sprites.
         this.load.image('rocket', './assets/rocket.png');
         this.load.image('spaceship', './assets/spaceship.png');
+        this.load.image('meowship', './assets/meowship.png');
         this.load.image('starfield', './assets/starfield.png');
 
         // Load spritesheet.

@@ -22,7 +22,7 @@ class Play extends Phaser.Scene {
         this.ship01 = new Spaceship(this, game.config.width + borderUISize * 6, borderUISize * 4, 'spaceship', 0, 30, game.config.width, game.settings.spaceshipSpeed).setOrigin(0,0);
         this.ship02 = new Spaceship(this, game.config.width + borderUISize * 3, borderUISize * 5 + borderPadding * 2, 'spaceship', 0, 20, game.config.width, game.settings.spaceshipSpeed).setOrigin(0,0);
         this.ship03 = new Spaceship(this, game.config.width, borderUISize * 6 + borderPadding * 4, 'spaceship', 0, 10, game.config.width, game.settings.spaceshipSpeed).setOrigin(0,0);
-        this.meowship = new Spaceship(this, game.config.width + 500, borderUISize * 7 + borderPadding * 6, 'meowship', 0, 100, game.config.width + 750, game.settings.spaceshipSpeed * 3);
+        this.meowship = new Spaceship(this, game.config.width + 500, borderUISize * 7 + borderPadding * 6, 'meowship', 0, 50, game.config.width + 750, game.settings.spaceshipSpeed * 3);
 
         // Define keys.
         keyFIRE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
@@ -51,17 +51,47 @@ class Play extends Phaser.Scene {
         // Game over flag.
         this.gameOver = false;
 
-        // 60-second play clock.
-        scoreConfig.fixedWidth = 0;
-        this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
-            this.add.text(game.config.width / 2, game.config.height/2, 'GAME OVER', scoreConfig).setOrigin(0.5)
-            this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart or <- for Menu', scoreConfig).setOrigin(0.5)
-            this.gameOver = true;
-        }, null, this);
+        // Initialize interactive timer.
+        this.timeLeft = game.settings.gameTimer;
+
+        // Display score.
+        let timerConfig = {
+            fontFamily: 'Courier',
+            fontSize: '28px',
+            backgroundColor: '#F3B141',
+            color: '#843605',
+            align: 'right',
+            padding: {
+                top: 5,
+                bottom: 5,
+            },
+            fixedWidth: 100
+        };
+        this.timerRight = this.add.text(game.config.width - borderUISize * 4 - borderPadding * 2, borderUISize + borderPadding * 2, Math.ceil(this.timeLeft / 1000), timerConfig);
     }
 
-    update() {
+    update(time, delta) {
         // Check key input for restart.
+        if (!this.gameOver && this.timeLeft <= 0) {
+            this.timeLeft = 0;
+            let gameOverConfig = {
+                fontFamily: 'Courier',
+                fontSize: '28px',
+                backgroundColor: '#F3B141',
+                color: '#843605',
+                align: 'right',
+                padding: {
+                    top: 5,
+                    bottom: 5,
+                }
+            };
+            this.add.text(game.config.width / 2, game.config.height/2, 'GAME OVER', gameOverConfig).setOrigin(0.5);
+            this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart or <- for Menu', gameOverConfig).setOrigin(0.5);
+            this.gameOver = true;
+        } else if (!this.gameOver) {
+            this.timeLeft -= delta;
+            this.timerRight.text = Math.ceil(this.timeLeft / 1000);
+        }
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyRESET)) {
             this.scene.restart();
         }
@@ -71,7 +101,9 @@ class Play extends Phaser.Scene {
 
         this.starfield.tilePositionX -= 4;
         if (!this.gameOver) {
-            this.p1Rocket.update();
+            if (this.p1Rocket.update()) {
+                this.timeLeft -= 3000;
+            }
             this.ship01.update();
             this.ship02.update();
             this.ship03.update();
@@ -127,6 +159,7 @@ class Play extends Phaser.Scene {
 
         // Score add and text update.
         this.p1Score += ship.points;
+        this.timeLeft += ship.points * 100;
         this.scoreLeft.text = this.p1Score;
     }
 }

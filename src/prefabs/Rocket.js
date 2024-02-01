@@ -10,7 +10,7 @@ class Rocket extends Phaser.GameObjects.Sprite {
         this.sfxShot = scene.sound.add('sfx-shot');
     }
 
-    update() {
+    update() { // Returns true if the rocket misses any ships.
         // Left/right movement.
         if (!this.isFiring) {
             if (keyLEFT.isDown && this.x >= borderUISize + this.width) {
@@ -35,7 +35,9 @@ class Rocket extends Phaser.GameObjects.Sprite {
         if (this.y <= borderUISize * 3 + borderPadding) {
             this.isFiring = false;
             this.y = game.config.height - borderUISize - borderPadding;
+            return true;
         }
+        return false;
     }
 
     reset() {

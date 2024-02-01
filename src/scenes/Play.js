@@ -55,6 +55,7 @@ class Play extends Phaser.Scene {
 
         // Initialize interactive timer.
         this.timeLeft = game.settings.gameTimer;
+        this.timeElapsed = 0;
 
         // Display score.
         let timerConfig = {
@@ -92,8 +93,17 @@ class Play extends Phaser.Scene {
             this.gameOver = true;
         } else if (!this.gameOver) {
             this.timeLeft -= delta;
+            this.timeElapsed += delta;
             this.timerRight.text = Math.ceil(this.timeLeft / 1000);
         }
+        if (this.timeElapsed >= 30000) {
+            this.ship01.changeSpeed(game.settings.spaceshipSpeed + 2);
+            this.ship02.changeSpeed(game.settings.spaceshipSpeed + 2);
+            this.ship03.changeSpeed(game.settings.spaceshipSpeed + 2);
+            this.meowship.changeSpeed(game.settings.spaceshipSpeed * 3 + 3);
+            this.p1Rocket.changeSpeed(4);
+        }
+
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyRESET)) {
             this.scene.restart();
         }

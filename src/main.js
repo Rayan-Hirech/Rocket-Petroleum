@@ -7,7 +7,9 @@ Mods Added:
     - (5 points): Implemented an interactive timer that counts down every second, as well as increases by one tenth of the ships score when hitting a ship, and decreases by 3 seconds when missing.
     - (3 points): Displayed the time remaining on the interactive timer on the top right of the screen.
     - (3 points): Implemented a scrolling parallax background.
+    - (1 point): Created 2 new scrolling tile sprites for the background (used in the parallax background).
     - (1 point): Implemented a speed increase for the ships and rocket after 30 seconds.
+    - (1 point): Allowed the player to control the rocket after it's fired.
 */
 
 let config = {
